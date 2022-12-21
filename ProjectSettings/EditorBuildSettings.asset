@@ -4,5 +4,14 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 0
+    path: Assets/Scene/SC Pixel Art Top Down - Basic.unity
+    guid: 86e89bd9e4a9c5245a015cf17e3c0aae
+  - enabled: 1
+    path: Assets/Scene/SC Room 0.unity
+    guid: f2a4d23c6cc22964394ba1e8adf09e4c
+  - enabled: 1
+    path: Assets/Scene/SC Room 1.unity
+    guid: e5b6f6fa72622e2448c9db36eeb27961
   m_configObjects: {}
