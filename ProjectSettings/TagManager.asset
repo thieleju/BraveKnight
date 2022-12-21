@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Mob
+  - Spawnpoint
   layers:
   - Default
   - TransparentFX
@@ -20,11 +21,11 @@ TagManager:
   - 
   - 
   - 
+  - HitboxPlayer
+  - HurtboxMob
   - 
-  - 
-  - 
-  - 
-  - 
+  - HitboxMob
+  - HurtboxPlayer
   - 
   - Layer 1
   - Layer 2

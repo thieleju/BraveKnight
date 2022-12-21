@@ -3,200 +3,256 @@ using System.Collections;
 
 public class HeroKnight : MonoBehaviour
 {
-  [SerializeField]
-  float m_speed = 4.0f;
+  public float speed = 4.0f;
 
-  // [SerializeField]
-  // float m_jumpForce = 7.5f;
+  public Transform attackPointRight;
+  public Transform attackPointLeft;
 
-  // [SerializeField]
-  // float m_rollForce = 6.0f;
+  public float attackRange = 0.7f;
+  public float attackDamage = 40f;
+  public float health_max = 100.0f;
+  public float health = 0.0f;
+  public float damage = 10.0f;
 
-  // [SerializeField]
-  // bool m_noBlood = false;
+  public LayerMask enemyLayers;
+  public string enemyHurtboxTag = "Mob";
 
-  // [SerializeField]
-  // GameObject m_slideDust;
+  public Animator animator;
+  public Rigidbody2D body2d;
 
-  private Animator m_animator;
-  private Rigidbody2D m_body2d;
-  // private Sensor_HeroKnight m_groundSensor;
-  // private Sensor_HeroKnight m_wallSensorR1;
-  // private Sensor_HeroKnight m_wallSensorR2;
-  // private Sensor_HeroKnight m_wallSensorL1;
-  // private Sensor_HeroKnight m_wallSensorL2;
-  // private bool m_isWallSliding = false;
-  // private bool m_grounded = false;
-  // private bool m_rolling = false;
-  private int m_facingDirection = 1;
-  private int m_currentAttack = 0;
-  private float m_timeSinceAttack = 0.0f;
-  private float m_delayToIdle = 0.0f;
-  // private float m_rollDuration = 8.0f / 14.0f;
-  // private float m_rollCurrentTime;
+  private int facingDirection = 1;
+  private int currentAttack = 0;
+  private float timeSinceAttack = 0.0f;
+  private float delayToIdle = 0.0f;
+
+  private float inputX_damped = 0.0f;
+  private float inputY_damped = 0.0f;
+
+  private bool isDead = false;
+
 
   // Use this for initialization
   void Start()
   {
-    m_animator = GetComponent<Animator>();
-    m_body2d = GetComponent<Rigidbody2D>();
-    // m_groundSensor = transform.Find("GroundSensor").GetComponent<Sensor_HeroKnight>();
-    // m_wallSensorR1 = transform.Find("WallSensor_R1").GetComponent<Sensor_HeroKnight>();
-    // m_wallSensorR2 = transform.Find("WallSensor_R2").GetComponent<Sensor_HeroKnight>();
-    // m_wallSensorL1 = transform.Find("WallSensor_L1").GetComponent<Sensor_HeroKnight>();
-    // m_wallSensorL2 = transform.Find("WallSensor_L2").GetComponent<Sensor_HeroKnight>();
+    health = health_max;
   }
 
   // Update is called once per frame
   void Update()
   {
     // Increase timer that controls attack combo
-    m_timeSinceAttack += Time.deltaTime;
-
-    // Increase timer that checks roll duration
-    // if (m_rolling)
-    //     m_rollCurrentTime += Time.deltaTime;
-
-    // Disable rolling if timer extends duration
-    // if (m_rollCurrentTime > m_rollDuration)
-    //     m_rolling = false;
-
-    //Check if character just landed on the ground
-    // if (!m_grounded && m_groundSensor.State())
-    // {
-    // m_grounded = true;
-    // m_animator.SetBool("Grounded", m_grounded);
-    // }
-
-    //Check if character just started falling
-    // if (m_grounded && !m_groundSensor.State())
-    // {
-    //     m_grounded = false;
-    //     m_animator.SetBool("Grounded", m_grounded);
-    // }
+    timeSinceAttack += Time.deltaTime;
 
     // -- Handle input and movement --
     float inputX = Input.GetAxis("Horizontal");
     float inputY = Input.GetAxis("Vertical");
 
     // Swap direction of sprite depending on walk direction
-    if (inputX > 0)
+    if (inputX > 0 && !isDead)
     {
       GetComponent<SpriteRenderer>().flipX = false;
-      m_facingDirection = 1;
+      facingDirection = 1;
     }
-    else if (inputX < 0)
+    else if (inputX < 0 && !isDead)
     {
       GetComponent<SpriteRenderer>().flipX = true;
-      m_facingDirection = -1;
+      facingDirection = -1;
     }
 
-
-    // Move
-    // if (!m_rolling)
-    //     m_body2d.velocity = new Vector2(inputX * m_speed, m_body2d.velocity.y);
-    // also move in y direction
-    m_body2d.velocity = new Vector2(inputX * m_speed, inputY * m_speed);
-
-
-    //Set AirSpeed in animator
-    // m_animator.SetFloat("AirSpeedY", m_body2d.velocity.y);
-
-    // -- Handle Animations --
-    //Wall Slide
-    // m_isWallSliding =
-    //     (m_wallSensorR1.State() && m_wallSensorR2.State())
-    //     || (m_wallSensorL1.State() && m_wallSensorL2.State());
-    // m_animator.SetBool("WallSlide", m_isWallSliding);
+    // Move character if not attacking and not dead
+    if (animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1") == false &&
+        animator.GetCurrentAnimatorStateInfo(0).IsName("Attack2") == false &&
+        animator.GetCurrentAnimatorStateInfo(0).IsName("Attack3") == false &&
+        !isDead)
+    {
+      body2d.velocity = new Vector2(inputX * speed, inputY * speed);
+    }
 
     //Death
     if (Input.GetKeyDown("e"))
     {
-      // m_animator.SetBool("noBlood", m_noBlood);
-      m_animator.SetTrigger("Death");
+      animator.SetTrigger("Death");
     }
     //Hurt
     else if (Input.GetKeyDown("q"))
-      m_animator.SetTrigger("Hurt");
-    //Attack
-    else if (Input.GetMouseButtonDown(0) && m_timeSinceAttack > 0.25f)
     {
-      m_currentAttack++;
-
-      // Loop back to one after third attack
-      if (m_currentAttack > 3)
-        m_currentAttack = 1;
-
-      // Reset Attack combo if time since last attack is too large
-      if (m_timeSinceAttack > 1.0f)
-        m_currentAttack = 1;
-
-      // Call one of three attack animations "Attack1", "Attack2", "Attack3"
-      m_animator.SetTrigger("Attack" + m_currentAttack);
-
-      // Reset timer
-      m_timeSinceAttack = 0.0f;
+      animator.SetTrigger("Hurt");
     }
-    // // Block
-    // else if (Input.GetMouseButtonDown(1) && !m_rolling)
-    // {
-    //     m_animator.SetTrigger("Block");
-    //     m_animator.SetBool("IdleBlock", true);
-    // }
-    // else if (Input.GetMouseButtonUp(1))
-    //     m_animator.SetBool("IdleBlock", false);
-    // // Roll
-    // else if (Input.GetKeyDown("left shift") && !m_rolling && !m_isWallSliding)
-    // {
-    //     m_rolling = true;
-    //     m_animator.SetTrigger("Roll");
-    //     m_body2d.velocity = new Vector2(m_facingDirection * m_rollForce, m_body2d.velocity.y);
-    // }
-    //Jump
-    // else if (Input.GetKeyDown("space") && m_grounded && !m_rolling)
-    // {
-    //     m_animator.SetTrigger("Jump");
-    //     m_grounded = false;
-    //     m_animator.SetBool("Grounded", m_grounded);
-    //     m_body2d.velocity = new Vector2(m_body2d.velocity.x, m_jumpForce);
-    //     m_groundSensor.Disable(0.2f);
-    // }
+    //Attack
+    else if (Input.GetMouseButtonDown(0) && timeSinceAttack > 0.25f)
+    {
+      Attack();
+      // stop movement velocity
+      body2d.velocity = new Vector2(0, 0);
+      delayToIdle = 1.01f;
+    }
     //Run
-    else if (Mathf.Abs(inputX) > Mathf.Epsilon || Mathf.Abs(inputY) > Mathf.Epsilon)
+    else if ((Mathf.Abs(inputX) > Mathf.Epsilon || Mathf.Abs(inputY) > Mathf.Epsilon))
     {
       // Reset timer
-      m_delayToIdle = 0.01f;
-      m_animator.SetInteger("AnimState", 1);
+      delayToIdle = 0.01f;
+      animator.SetInteger("AnimState", 1);
     }
     //Idle
     else
     {
       // Prevents flickering transitions to idle
-      m_delayToIdle -= Time.deltaTime;
-      if (m_delayToIdle < 0)
-        m_animator.SetInteger("AnimState", 0);
+      delayToIdle -= Time.deltaTime;
+      if (delayToIdle < 0)
+        animator.SetInteger("AnimState", 0);
     }
   }
 
-  // Animation Events
-  // Called in slide animation.
-  // void AE_SlideDust()
-  // {
-  //     Vector3 spawnPosition;
+  void Attack()
+  {
+    currentAttack++;
 
-  //     if (m_facingDirection == 1)
-  //         spawnPosition = m_wallSensorR2.transform.position;
-  //     else
-  //         spawnPosition = m_wallSensorL2.transform.position;
+    // Loop back to one after third attack
+    if (currentAttack > 3)
+      currentAttack = 1;
 
-  //     if (m_slideDust != null)
-  //     {
-  //         // Set correct arrow spawn position
-  //         GameObject dust =
-  //             Instantiate(m_slideDust, spawnPosition, gameObject.transform.localRotation)
-  //             as GameObject;
-  //         // Turn arrow in correct direction
-  //         dust.transform.localScale = new Vector3(m_facingDirection, 1, 1);
-  //     }
-  // }
+    // Reset Attack combo if time since last attack is too large
+    if (timeSinceAttack > 1.0f)
+      currentAttack = 1;
+
+    // Call one of three attack animations "Attack1", "Attack2", "Attack3"
+    animator.SetTrigger("Attack" + currentAttack);
+
+    // Reset timer
+    timeSinceAttack = 0.0f;
+
+    if (facingDirection == 1)
+      AttackCollision(attackPointRight);
+    else
+      AttackCollision(attackPointLeft);
+  }
+
+  void AttackCollision(Transform attackPoint)
+  {
+    // Detect collision with colliders in enemyLayers in range of attack
+    Collider2D[] hitObjects = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
+
+    // check which hitObject has the gameobject with the tag "Mob"
+    foreach (Collider2D hitObject in hitObjects)
+    {
+      if (hitObject.gameObject.tag == enemyHurtboxTag)
+      {
+        // Damage enemies
+        hitObject.gameObject.transform.parent.gameObject.GetComponent<Mob>().TakeDamage(attackDamage);
+      }
+    }
+  }
+
+  public void TakeDamage(float damage)
+  {
+    health -= damage;
+
+    // take damage
+    animator.SetTrigger("Hurt");
+    Debug.Log("Player took " + damage + " damage");
+
+    // check if mob is dead
+    if (health <= 0)
+    {
+      animator.SetBool("isDead", true);
+      isDead = true;
+
+      animator.SetTrigger("Death");
+
+      // reset velocity
+      body2d.velocity = new Vector2(0, 0);
+
+      Debug.Log("Player died");
+      return;
+    }
+  }
+
+  void OnDrawGizmosSelected()
+  {
+    if (attackPointRight != null && facingDirection == 1)
+      Gizmos.DrawWireSphere(attackPointRight.position, attackRange);
+    if (attackPointLeft != null && facingDirection == -1)
+      Gizmos.DrawWireSphere(attackPointLeft.position, attackRange);
+  }
 }
+// groundSensor = transform.Find("GroundSensor").GetComponent<Sensor_HeroKnight>();
+// wallSensorR1 = transform.Find("WallSensor_R1").GetComponent<Sensor_HeroKnight>();
+// wallSensorR2 = transform.Find("WallSensor_R2").GetComponent<Sensor_HeroKnight>();
+// wallSensorL1 = transform.Find("WallSensor_L1").GetComponent<Sensor_HeroKnight>();
+// wallSensorL2 = transform.Find("WallSensor_L2").GetComponent<Sensor_HeroKnight>();
+// Increase timer that checks roll duration
+// if (rolling)
+//     rollCurrentTime += Time.deltaTime;
+
+// Disable rolling if timer extends duration
+// if (rollCurrentTime > rollDuration)
+//     rolling = false;
+
+//Check if character just landed on the ground
+// if (!grounded && groundSensor.State())
+// {
+// grounded = true;
+// animator.SetBool("Grounded", grounded);
+// }
+
+//Check if character just started falling
+// if (grounded && !groundSensor.State())
+// {
+//     grounded = false;
+//     animator.SetBool("Grounded", grounded);
+// }
+
+//Set AirSpeed in animator
+// animator.SetFloat("AirSpeedY", body2d.velocity.y);
+
+// -- Handle Animations --
+//Wall Slide
+// isWallSliding =
+//     (wallSensorR1.State() && wallSensorR2.State())
+//     || (wallSensorL1.State() && wallSensorL2.State());
+// animator.SetBool("WallSlide", isWallSliding);
+// // Block
+// else if (Input.GetMouseButtonDown(1) && !rolling)
+// {
+//     animator.SetTrigger("Block");
+//     animator.SetBool("IdleBlock", true);
+// }
+// else if (Input.GetMouseButtonUp(1))
+//     animator.SetBool("IdleBlock", false);
+// // Roll
+// else if (Input.GetKeyDown("left shift") && !rolling && !isWallSliding)
+// {
+//     rolling = true;
+//     animator.SetTrigger("Roll");
+//     body2d.velocity = new Vector2(facingDirection * rollForce, body2d.velocity.y);
+// }
+//Jump
+// else if (Input.GetKeyDown("space") && grounded && !rolling)
+// {
+//     animator.SetTrigger("Jump");
+//     grounded = false;
+//     animator.SetBool("Grounded", grounded);
+//     body2d.velocity = new Vector2(body2d.velocity.x, jumpForce);
+//     groundSensor.Disable(0.2f);
+// }
+// Animation Events
+// Called in slide animation.
+// void AE_SlideDust()
+// {
+//     Vector3 spawnPosition;
+
+//     if (facingDirection == 1)
+//         spawnPosition = wallSensorR2.transform.position;
+//     else
+//         spawnPosition = wallSensorL2.transform.position;
+
+//     if (slideDust != null)
+//     {
+//         // Set correct arrow spawn position
+//         GameObject dust =
+//             Instantiate(slideDust, spawnPosition, gameObject.transform.localRotation)
+//             as GameObject;
+//         // Turn arrow in correct direction
+//         dust.transform.localScale = new Vector3(facingDirection, 1, 1);
+//     }
+// }
