@@ -1,17 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class RoomMove : MonoBehaviour
 {
-  public int sceneBuildIndex;
+  public int room_number = 0;
 
   private void OnTriggerEnter2D(Collider2D collision)
   {
     if (collision.CompareTag("Player"))
     {
-      SceneManager.LoadScene(sceneBuildIndex, LoadSceneMode.Single);
+      GameObject game_handler = GameObject.Find("Main Camera");
+      game_handler.GetComponent<GameHandler>().LoadRoom(room_number);
     }
   }
 }

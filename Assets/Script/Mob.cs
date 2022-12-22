@@ -3,171 +3,227 @@ using System.Collections;
 
 public class Mob : MonoBehaviour
 {
-  public Transform attackPointRight;
-  public Transform attackPointLeft;
-
-  public float attackRange = 0.7f;
-  public float attackDamage = 40f;
-
-  public LayerMask enemyLayers;
-  public string playerHurtboxTag = "Player";
-
-  public float speed = 0.5f;
-  public float health_max = 100.0f;
-  public float health = 0.0f;
-  public float damage = 10.0f;
-  public GameObject target;
-
-  public Animator animator;
-  public Rigidbody2D body2d;
-
-  private int facingDirection = 1;
-  private int currentAttack = 0;
-  private float timeSinceAttack = 0.0f;
-  private float delayToIdle = 0.0f;
-  private float delayToAttack = 0.0f;
-
-  private bool isAttacking = false;
-
   /**
    * AnimState values:
    * 0 - Idle
    * 1 - Walking
    * Trigger:
-   * AttackLight
-   * AttackHeavy
-   * Hurt
-   * Death
+   * - AttackLight
+   * - AttackHeavy
+   * - Hurt
+   * - Death
    */
+
+  /* Public variables */
+  public Transform attack_point_right;
+  public Transform attack_point_left;
+
+  public Animator animator;
+  public Rigidbody2D body2d;
+  public HealthBar healthBar;
+
+  public LayerMask playerLayers;
+  public string playerHurtboxTag = "Player";
+
+  public float health_max = 100.0f;
+  public float health = 0.0f;
+  public float speed = 0.5f;
+  public float attack_range = 0.7f;
+  public float attack_damage = 40f;
+
+  /* Private variables */
+  private float delay_to_idle = 0.0f;
+  private float delay_attack_hit = 0.0f;
+  private float delay_attack_cooldown = 0.0f;
+
+  private const float IDLE_DELAY = 0.01f;
+  private const float ATTACK_HIT_DELAY = 0.70f;
+  private const float ATTACK_COOLDOWN_DELAY = 1.0f;
+  private const float HIT_STUN_DELAY = 3.5f;
+
+  private int currentAttack = 0;
+  private bool isAttacking = false;
+  private bool mob_facing_left = true;
+  private Vector2 direction_to_target = new Vector2(0, 0);
 
   // Start is called before the first frame update
   void Start()
   {
     health = health_max;
+    healthBar.SetMaxHealth(health_max);
   }
 
   // Update is called once per frame
   void Update()
   {
-    // reduce delay to attack
-    if (delayToAttack > 0)
-    {
-      delayToAttack -= Time.deltaTime;
-    }
-    else if (isAttacking)
-    {
-      Attack();
-    }
+    // flip sprite and set variable direction_to_target
+    SetFacingDirection();
 
-    // Calculate the vector pointing from our position to the target
-    Vector2 direction = target.transform.position - transform.position;
+    // reduce delay timers
+    if (delay_attack_hit > 0)
+      delay_attack_hit -= Time.deltaTime;
 
-    // Swap direction of sprite depending on walk direction
-    if (direction.x > 0)
-    {
-      GetComponent<SpriteRenderer>().flipX = false;
-      facingDirection = 1;
-    }
-    else if (direction.y < 0)
-    {
-      GetComponent<SpriteRenderer>().flipX = true;
-      facingDirection = -1;
-    }
+    if (delay_attack_cooldown > 0)
+      delay_attack_cooldown -= Time.deltaTime;
 
-    // Attack
-    if (Input.GetKeyDown(KeyCode.Space))
-    {
-      // stop movement velocity
-      body2d.velocity = new Vector2(0, 0);
+    // execute hit of attack when delay is over
+    if (delay_attack_hit < 0 && isAttacking)
+      AttackHit();
 
-      // start attack animation
-      if (currentAttack == 0)
-      {
-        currentAttack = 1;
-        animator.SetTrigger("AttackLight");
-      }
-      else
-      {
-        currentAttack = 0;
-        animator.SetTrigger("AttackHeavy");
-      }
-
-      isAttacking = true;
-      delayToAttack = 0.70f;
-      delayToIdle = 2.01f;
-    }
-    // move the character
-    // else if (Mathf.Abs(direction.x) > Mathf.Epsilon || Mathf.Abs(direction.y) > Mathf.Epsilon)
-    // {
-    //   delayToIdle = 0.01f;
-    //   animator.SetInteger("AnimState", 1);
-    //   body2d.velocity = new Vector2(speed * direction.x, speed * direction.y);
-    //   return;
-    // }
+    if (MobShouldStartAttack())
+      MobAttack();
+    else if (MobShouldStartMoving())
+      MobMovement();
     else
-    {
+    { // IDLE
       // Prevents flickering transitions to idle
-      delayToIdle -= Time.deltaTime;
-      if (delayToIdle < 0)
+      delay_to_idle -= Time.deltaTime;
+      if (delay_to_idle < 0)
         animator.SetInteger("AnimState", 0);
     }
   }
 
-  void Attack()
+  bool MobShouldStartAttack()
   {
-    if (facingDirection == 1)
-      AttackCollision(attackPointRight);
-    else
-      AttackCollision(attackPointLeft);
+    if (Input.GetKeyDown(KeyCode.Space)) return true;
 
-    // Reset timer
-    timeSinceAttack = 0.0f;
-    isAttacking = false;
+    if (isAttacking) return false;
+
+    if (delay_attack_cooldown > 0) return false;
+
+    Transform attackPoint;
+    if (mob_facing_left)
+      attackPoint = attack_point_left;
+    else
+      attackPoint = attack_point_right;
+
+    // Detect collision with colliders in playerLayers in range of attack
+    Collider2D[] hitObjects = Physics2D.OverlapCircleAll(attackPoint.position, attack_range, playerLayers);
+
+    // check which hitObject has the gameobject with the tag "Player"
+    foreach (Collider2D hitObject in hitObjects)
+    {
+      if (hitObject.gameObject.tag == playerHurtboxTag)
+      {
+        return true;
+      }
+    }
+    return false;
   }
 
-  void AttackCollision(Transform attackPoint)
+  void MobAttack()
   {
-    // Detect collision with colliders in enemyLayers in range of attack
-    Collider2D[] hitObjects = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
+    // start attack animation
+    if (currentAttack == 0)
+    {
+      currentAttack = 1;
+      animator.SetTrigger("AttackLight");
+    }
+    else
+    {
+      currentAttack = 0;
+      animator.SetTrigger("AttackHeavy");
+    }
+    // stop movement velocity
+    body2d.velocity = new Vector2(0, 0);
+
+    // start attacking
+    isAttacking = true;
+    delay_attack_hit = ATTACK_HIT_DELAY;
+    delay_to_idle = IDLE_DELAY;
+  }
+
+
+  bool MobShouldStartMoving()
+  {
+    if (isAttacking) return false;
+    return Mathf.Abs(direction_to_target.x) > Mathf.Epsilon ||
+           Mathf.Abs(direction_to_target.y) > Mathf.Epsilon;
+  }
+
+  void MobMovement()
+  {
+    animator.SetInteger("AnimState", 1);
+    body2d.velocity = new Vector2(speed * direction_to_target.x, speed * direction_to_target.y);
+    delay_to_idle = IDLE_DELAY;
+  }
+
+  void SetFacingDirection()
+  {
+    // Calculate the vector pointing from our position to the target
+    GameObject target = GameObject.Find("HeroKnight");
+    direction_to_target = target.transform.position - transform.position;
+    // Swap direction of sprite depending on walk direction
+    if (direction_to_target.x > 0)
+      mob_facing_left = false;
+    else if (direction_to_target.y < 0)
+      mob_facing_left = true;
+    // set sprite flip on x axis
+    GetComponent<SpriteRenderer>().flipX = mob_facing_left;
+  }
+
+  void AttackHit()
+  {
+    Transform attackPoint;
+    if (mob_facing_left)
+      attackPoint = attack_point_left;
+    else
+      attackPoint = attack_point_right;
+
+    // Detect collision with colliders in playerLayers in range of attack
+    Collider2D[] hitObjects = Physics2D.OverlapCircleAll(attackPoint.position, attack_range, playerLayers);
 
     // check which hitObject has the gameobject with the tag "Mob"
     foreach (Collider2D hitObject in hitObjects)
     {
       if (hitObject.gameObject.tag == playerHurtboxTag)
       {
-        // Damage enemies
-        hitObject.gameObject.transform.parent.gameObject.GetComponent<HeroKnight>().TakeDamage(attackDamage);
+        // Damage Player
+        hitObject.gameObject.transform.parent.gameObject.GetComponent<HeroKnight>().TakeDamage(attack_damage);
+        Debug.Log("Mob hit player");
       }
     }
+    isAttacking = false;
+    delay_attack_cooldown = ATTACK_COOLDOWN_DELAY;
   }
 
   public void TakeDamage(float damage)
   {
     health -= damage;
+    healthBar.SetHealth(health);
 
-    // take damage
-    animator.SetTrigger("Hurt");
-    Debug.Log("Mob took " + damage + " damage");
-
-    // check if mob is dead
     if (health <= 0)
     {
-      animator.SetBool("isDead", true);
-      this.enabled = false;
-      // Disable colliders for mob and hurtbox
-      GetComponent<Collider2D>().enabled = false;
-      transform.Find("Hurtbox").GetComponent<Collider2D>().enabled = false;
-
-      Debug.Log("Mob died");
+      MobDeath();
       return;
     }
+
+    if (!isAttacking)
+      animator.SetTrigger("Hurt");
+
+    Debug.Log("Mob took " + damage + " damage");
+  }
+
+  void MobDeath()
+  {
+    animator.SetTrigger("Hurt");
+    animator.SetBool("isDead", true);
+    this.enabled = false;
+
+    // Disable colliders for mob and hurtbox
+    GetComponent<Collider2D>().enabled = false;
+    transform.Find("Hurtbox").GetComponent<Collider2D>().enabled = false;
+    // disable healthbar
+    healthBar.gameObject.SetActive(false);
+
+    Debug.Log("Mob died");
   }
 
   void OnDrawGizmosSelected()
   {
-    if (attackPointRight != null && facingDirection == 1)
-      Gizmos.DrawWireSphere(attackPointRight.position, attackRange);
-    if (attackPointLeft != null && facingDirection == -1)
-      Gizmos.DrawWireSphere(attackPointLeft.position, attackRange);
+    if (mob_facing_left)
+      Gizmos.DrawWireSphere(attack_point_left.position, attack_range);
+    if (!mob_facing_left)
+      Gizmos.DrawWireSphere(attack_point_right.position, attack_range);
   }
 }
