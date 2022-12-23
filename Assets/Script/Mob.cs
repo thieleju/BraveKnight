@@ -23,7 +23,7 @@ public class Mob : MonoBehaviour
   public HealthBar healthBar;
 
   public LayerMask playerLayers;
-  public string playerHurtboxTag = "Player";
+  public string playerHurtboxTag = "PlayerHurtbox";
 
   public float health_max = 100.0f;
   public float health = 0.0f;
@@ -43,6 +43,7 @@ public class Mob : MonoBehaviour
 
   private int currentAttack = 0;
   private bool isAttacking = false;
+  private bool isDead = false;
   private bool mob_facing_left = true;
   private Vector2 direction_to_target = new Vector2(0, 0);
 
@@ -85,7 +86,7 @@ public class Mob : MonoBehaviour
 
   bool MobShouldStartAttack()
   {
-    if (Input.GetKeyDown(KeyCode.Space)) return true;
+    if (PlayerisDead()) return false;
 
     if (isAttacking) return false;
 
@@ -136,6 +137,7 @@ public class Mob : MonoBehaviour
 
   bool MobShouldStartMoving()
   {
+    if (PlayerisDead()) return false;
     if (isAttacking) return false;
     return Mathf.Abs(direction_to_target.x) > Mathf.Epsilon ||
            Mathf.Abs(direction_to_target.y) > Mathf.Epsilon;
@@ -151,7 +153,7 @@ public class Mob : MonoBehaviour
   void SetFacingDirection()
   {
     // Calculate the vector pointing from our position to the target
-    GameObject target = GameObject.Find("HeroKnight");
+    GameObject target = GameObject.FindWithTag("Player");
     direction_to_target = target.transform.position - transform.position;
     // Swap direction of sprite depending on walk direction
     if (direction_to_target.x > 0)
@@ -180,7 +182,6 @@ public class Mob : MonoBehaviour
       {
         // Damage Player
         hitObject.gameObject.transform.parent.gameObject.GetComponent<HeroKnight>().TakeDamage(attack_damage);
-        Debug.Log("Mob hit player");
       }
     }
     isAttacking = false;
@@ -200,8 +201,6 @@ public class Mob : MonoBehaviour
 
     if (!isAttacking)
       animator.SetTrigger("Hurt");
-
-    Debug.Log("Mob took " + damage + " damage");
   }
 
   void MobDeath()
@@ -209,6 +208,7 @@ public class Mob : MonoBehaviour
     animator.SetTrigger("Hurt");
     animator.SetBool("isDead", true);
     this.enabled = false;
+    isDead = true;
 
     // Disable colliders for mob and hurtbox
     GetComponent<Collider2D>().enabled = false;
@@ -219,11 +219,21 @@ public class Mob : MonoBehaviour
     Debug.Log("Mob died");
   }
 
+  bool PlayerisDead()
+  {
+    return !GameObject.FindWithTag("Player").GetComponent<HeroKnight>().IsAlive();
+  }
+
   void OnDrawGizmosSelected()
   {
     if (mob_facing_left)
       Gizmos.DrawWireSphere(attack_point_left.position, attack_range);
     if (!mob_facing_left)
       Gizmos.DrawWireSphere(attack_point_right.position, attack_range);
+  }
+
+  public bool IsAlive()
+  {
+    return !isDead;
   }
 }

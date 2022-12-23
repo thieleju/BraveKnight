@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1513147047487369825}
   m_Layer: 15
   m_Name: Hurtbox
-  m_TagString: Mob
+  m_TagString: MobHurtbox
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -232,7 +232,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1513147048534613636}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.409, y: 0.048, z: 0.1116625}
+  m_LocalPosition: {x: -0.4, y: -0.021, z: 0.1116625}
   m_LocalScale: {x: 0.33333334, y: 0.33333334, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -440,7 +440,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1513147049192778926}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.328, y: 0.042, z: 0.1116625}
+  m_LocalPosition: {x: 0.4, y: -0.021, z: 0.1116625}
   m_LocalScale: {x: 0.33333334, y: 0.33333334, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -715,12 +715,12 @@ MonoBehaviour:
   playerLayers:
     serializedVersion: 2
     m_Bits: 262144
-  playerHurtboxTag: Player
+  playerHurtboxTag: PlayerHurtbox
   health_max: 100
   health: 0
   speed: 0.2
   attack_range: 0.7
-  attack_damage: 10
+  attack_damage: 20
 --- !u!70 &4407778260531703186
 CapsuleCollider2D:
   m_ObjectHideFlags: 0

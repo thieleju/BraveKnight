@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Mob
   - Spawnpoint
+  - MobHurtbox
+  - PlayerHurtbox
   layers:
   - Default
   - TransparentFX

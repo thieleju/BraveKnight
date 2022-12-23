@@ -12,18 +12,18 @@ public class HeroKnight : MonoBehaviour
   public HealthBar healthBar;
 
   public LayerMask enemyLayers;
-  public string enemyHurtboxTag = "Mob";
+  public string enemyHurtboxTag = "MobHurtbox";
 
   public float speed = 4.0f;
-  public float attackRange = 0.7f;
-  public float attackDamage = 40f;
+  public float attack_range = 0.7f;
+  public float attack_damage = 40f;
   public float health_max = 100.0f;
   public float health = 0.0f;
-  public float damage = 10.0f;
 
   /* Private variables */
   private int facingDirection = 1;
   private int currentAttack = 0;
+  private float respawn_delay = 3.0f;
   private float timeSinceAttack = 0.0f;
   private float delayToIdle = 0.0f;
   private float inputX_damped = 0.0f;
@@ -69,17 +69,17 @@ public class HeroKnight : MonoBehaviour
     }
 
     //Death
-    if (Input.GetKeyDown("e"))
-    {
-      animator.SetTrigger("Death");
-    }
-    //Hurt
-    else if (Input.GetKeyDown("q"))
-    {
-      animator.SetTrigger("Hurt");
-    }
+    // if (Input.GetKeyDown("e"))
+    // {
+    //   animator.SetTrigger("Death");
+    // }
+    // //Hurt
+    // else if (Input.GetKeyDown("q"))
+    // {
+    //   animator.SetTrigger("Hurt");
+    // }
     //Attack
-    else if (Input.GetMouseButtonDown(0) && timeSinceAttack > 0.25f)
+    if (Input.GetMouseButtonDown(0) && timeSinceAttack > 0.25f && !isDead)
     {
       Attack();
       // stop movement velocity
@@ -87,7 +87,7 @@ public class HeroKnight : MonoBehaviour
       delayToIdle = 1.01f;
     }
     //Run
-    else if ((Mathf.Abs(inputX) > Mathf.Epsilon || Mathf.Abs(inputY) > Mathf.Epsilon))
+    else if ((Mathf.Abs(inputX) > Mathf.Epsilon || Mathf.Abs(inputY) > Mathf.Epsilon) && !isDead)
     {
       // Reset timer
       delayToIdle = 0.01f;
@@ -130,7 +130,7 @@ public class HeroKnight : MonoBehaviour
   void AttackCollision(Transform attackPoint)
   {
     // Detect collision with colliders in enemyLayers in range of attack
-    Collider2D[] hitObjects = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
+    Collider2D[] hitObjects = Physics2D.OverlapCircleAll(attackPoint.position, attack_range, enemyLayers);
 
     // check which hitObject has the gameobject with the tag "Mob"
     foreach (Collider2D hitObject in hitObjects)
@@ -138,7 +138,7 @@ public class HeroKnight : MonoBehaviour
       if (hitObject.gameObject.tag == enemyHurtboxTag)
       {
         // Damage enemies
-        hitObject.gameObject.transform.parent.gameObject.GetComponent<Mob>().TakeDamage(attackDamage);
+        hitObject.gameObject.transform.parent.gameObject.GetComponent<Mob>().TakeDamage(attack_damage);
       }
     }
   }
@@ -150,29 +150,63 @@ public class HeroKnight : MonoBehaviour
     healthBar.SetHealth(health);
 
     animator.SetTrigger("Hurt");
-    Debug.Log("Player took " + damage + " damage");
 
-    // check if mob is dead
-    if (health <= 0)
+    // return if player is still alive
+    if (health > 0) return;
+
+    animator.SetBool("isDead", true);
+    isDead = true;
+
+    animator.SetTrigger("Death");
+
+    // reset velocity
+    body2d.velocity = new Vector2(0, 0);
+
+    // hide healthbar
+    healthBar.gameObject.SetActive(false);
+
+    // respawn player after x seconds
+    Invoke("Respawn", respawn_delay);
+  }
+
+  void Respawn()
+  {
+    // reset health
+    health = health_max;
+    healthBar.SetHealth(health);
+
+    // trigger respawn
+    animator.SetTrigger("Respawn");
+
+    // show healthbar
+    healthBar.gameObject.SetActive(true);
+
+    // reset death state
+    animator.SetBool("isDead", false);
+    isDead = false;
+
+    // remove all mobs
+    GameObject[] mobs = GameObject.FindGameObjectsWithTag("Mob");
+    foreach (GameObject mob in mobs)
     {
-      animator.SetBool("isDead", true);
-      isDead = true;
-
-      animator.SetTrigger("Death");
-
-      // reset velocity
-      body2d.velocity = new Vector2(0, 0);
-
-      Debug.Log("Player died");
-      return;
+      Destroy(mob);
     }
+
+    // move to spawn point
+    GameObject game_handler = GameObject.Find("Main Camera");
+    game_handler.GetComponent<GameHandler>().LoadRoom(0);
+  }
+
+  public bool IsAlive()
+  {
+    return !isDead;
   }
 
   void OnDrawGizmosSelected()
   {
     if (attackPointRight != null && facingDirection == 1)
-      Gizmos.DrawWireSphere(attackPointRight.position, attackRange);
+      Gizmos.DrawWireSphere(attackPointRight.position, attack_range);
     if (attackPointLeft != null && facingDirection == -1)
-      Gizmos.DrawWireSphere(attackPointLeft.position, attackRange);
+      Gizmos.DrawWireSphere(attackPointLeft.position, attack_range);
   }
 }

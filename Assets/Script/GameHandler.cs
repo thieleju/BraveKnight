@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-
 public class GameHandler : MonoBehaviour
 {
+
+  public GameObject player_prefab;
 
   private KeyCode[] keyCodes = {
          KeyCode.Alpha1,
@@ -21,6 +22,14 @@ public class GameHandler : MonoBehaviour
 
   void Start()
   {
+    // Instantiate player
+    Instantiate(player_prefab, new Vector2(0, 0), Quaternion.identity);
+
+    // set camera target
+    GameObject camera = GameObject.Find("Main Camera");
+    Transform player = GameObject.FindWithTag("Player").transform;
+    camera.GetComponent<CameraFollow>().SetTarget(player);
+
     // Load first room
     LoadRoom(0);
   }
@@ -35,27 +44,23 @@ public class GameHandler : MonoBehaviour
 
   public void LoadRoom(int roomNumber)
   {
-    GameObject hero = GameObject.Find("HeroKnight");
+    // find player by tag and room by name
+    GameObject player = GameObject.FindWithTag("Player");
     GameObject current_room = GameObject.Find("Room " + roomNumber);
 
     if (current_room == null) return;
-    Debug.Log("Loading room " + roomNumber);
 
-    // move hero to spawn point
+    // move player to spawn point
     GameObject spawn_point = current_room.transform.Find("Spawnpoint").gameObject;
-    hero.transform.position = spawn_point.transform.position;
+    player.transform.position = spawn_point.transform.position;
 
-    // Find mobs in Mobs folder 
-    GameObject mobs = current_room.transform.Find("Mobs").gameObject;
-    if (mobs != null) return;
 
-    // Enable all mobs
-    GameObject[] enemies = mobs.GetComponentsInChildren<GameObject>();
-    Debug.Log("Found " + enemies.Length + " enemies");
-    foreach (GameObject enemy in enemies)
-    {
-      enemy.GetComponent<Mob>().enabled = true;
-    }
+    Debug.Log("Loaded room " + roomNumber);
+
+    // Use mobspawner to spawn mobs
+    GameObject spawner = current_room.GetComponent<MobSpawner>().gameObject;
+    if (spawner == null) return;
+    spawner.GetComponent<MobSpawner>().SpawnMobs();
   }
 
 }
