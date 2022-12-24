@@ -8,6 +8,7 @@ TagManager:
   - Spawnpoint
   - MobHurtbox
   - PlayerHurtbox
+  - Healstone
   layers:
   - Default
   - TransparentFX
@@ -33,7 +34,7 @@ TagManager:
   - Layer 2
   - Layer 3
   - 
-  - 
+  - Chest
   - Healthbar
   - 
   - 

@@ -38,8 +38,7 @@ public class Mob : MonoBehaviour
 
   private const float IDLE_DELAY = 0.01f;
   private const float ATTACK_HIT_DELAY = 0.70f;
-  private const float ATTACK_COOLDOWN_DELAY = 1.0f;
-  private const float HIT_STUN_DELAY = 3.5f;
+  private const float ATTACK_COOLDOWN_DELAY = 0.7f;
 
   private int currentAttack = 0;
   private bool isAttacking = false;

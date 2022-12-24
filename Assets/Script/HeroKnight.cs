@@ -19,6 +19,7 @@ public class HeroKnight : MonoBehaviour
   public float attack_damage = 40f;
   public float health_max = 100.0f;
   public float health = 0.0f;
+  public float block_duration = 0.5f;
 
   /* Private variables */
   private int facingDirection = 1;
@@ -26,9 +27,11 @@ public class HeroKnight : MonoBehaviour
   private float respawn_delay = 3.0f;
   private float timeSinceAttack = 0.0f;
   private float delayToIdle = 0.0f;
+  private float delayToBlock = 0.0f;
   private float inputX_damped = 0.0f;
   private float inputY_damped = 0.0f;
   private bool isDead = false;
+  private bool isBlocking = false;
 
   // Use this for initialization
   void Start()
@@ -48,12 +51,12 @@ public class HeroKnight : MonoBehaviour
     float inputY = Input.GetAxis("Vertical");
 
     // Swap direction of sprite depending on walk direction
-    if (inputX > 0 && !isDead)
+    if (inputX > 0 && !isDead && !isBlocking)
     {
       GetComponent<SpriteRenderer>().flipX = false;
       facingDirection = 1;
     }
-    else if (inputX < 0 && !isDead)
+    else if (inputX < 0 && !isDead && !isBlocking)
     {
       GetComponent<SpriteRenderer>().flipX = true;
       facingDirection = -1;
@@ -63,23 +66,33 @@ public class HeroKnight : MonoBehaviour
     if (animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1") == false &&
         animator.GetCurrentAnimatorStateInfo(0).IsName("Attack2") == false &&
         animator.GetCurrentAnimatorStateInfo(0).IsName("Attack3") == false &&
-        !isDead)
+        !isDead && !isBlocking)
     {
       body2d.velocity = new Vector2(inputX * speed, inputY * speed);
     }
 
-    //Death
-    // if (Input.GetKeyDown("e"))
-    // {
-    //   animator.SetTrigger("Death");
-    // }
-    // //Hurt
-    // else if (Input.GetKeyDown("q"))
-    // {
-    //   animator.SetTrigger("Hurt");
-    // }
+    // decrease block delay
+    if (delayToBlock > 0.0f)
+      delayToBlock -= Time.deltaTime;
+
+    if (delayToBlock <= 0.0f)
+    {
+      isBlocking = false;
+      delayToIdle = 0.01f;
+    }
+
+    // Block
+    if (Input.GetMouseButtonDown(1) && timeSinceAttack > 0.25f && !isDead && !isBlocking)
+    {
+      // Reset timer
+      animator.SetTrigger("Block");
+      // stop movement velocity
+      body2d.velocity = new Vector2(0, 0);
+      delayToBlock = 1.01f;
+      isBlocking = true;
+    }
     //Attack
-    if (Input.GetMouseButtonDown(0) && timeSinceAttack > 0.25f && !isDead)
+    else if (Input.GetMouseButtonDown(0) && timeSinceAttack > 0.25f && !isDead && !isBlocking)
     {
       Attack();
       // stop movement velocity
@@ -87,7 +100,7 @@ public class HeroKnight : MonoBehaviour
       delayToIdle = 1.01f;
     }
     //Run
-    else if ((Mathf.Abs(inputX) > Mathf.Epsilon || Mathf.Abs(inputY) > Mathf.Epsilon) && !isDead)
+    else if ((Mathf.Abs(inputX) > Mathf.Epsilon || Mathf.Abs(inputY) > Mathf.Epsilon) && !isDead && !isBlocking)
     {
       // Reset timer
       delayToIdle = 0.01f;
@@ -138,13 +151,31 @@ public class HeroKnight : MonoBehaviour
       if (hitObject.gameObject.tag == enemyHurtboxTag)
       {
         // Damage enemies
-        hitObject.gameObject.transform.parent.gameObject.GetComponent<Mob>().TakeDamage(attack_damage);
+        Mob mob = hitObject.gameObject.transform.parent.gameObject.GetComponent<Mob>();
+        if (mob != null)
+          mob.TakeDamage(attack_damage);
+        Boss boss = hitObject.gameObject.transform.parent.gameObject.GetComponent<Boss>();
+        if (boss != null)
+          boss.TakeDamage(attack_damage);
       }
     }
   }
 
   public void TakeDamage(float damage)
   {
+    // check if player is blocking 
+    if (isBlocking)
+    {
+      animator.SetTrigger("Block_Flash");
+      isBlocking = false;
+      // delayToIdle = 1f;
+
+      // take a quarter of the damage
+      health -= damage / 5;
+      healthBar.SetHealth(health);
+      return;
+    }
+
     // take damage
     health -= damage;
     healthBar.SetHealth(health);
@@ -195,6 +226,14 @@ public class HeroKnight : MonoBehaviour
     // move to spawn point
     GameObject game_handler = GameObject.Find("Main Camera");
     game_handler.GetComponent<GameHandler>().LoadRoom(0);
+  }
+
+  public void HealHealth(float heal)
+  {
+    health += heal;
+    if (health > health_max)
+      health = health_max;
+    healthBar.SetHealth(health);
   }
 
   public bool IsAlive()

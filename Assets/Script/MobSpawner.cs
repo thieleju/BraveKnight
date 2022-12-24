@@ -8,6 +8,7 @@ public class MobSpawner : MonoBehaviour
 
   public GameObject skeleton_prefab;
   public GameObject goblin_prefab;
+  public GameObject boss_prefab;
 
   public void SpawnMobs()
   {
@@ -23,6 +24,10 @@ public class MobSpawner : MonoBehaviour
         case "Goblin":
           Instantiate(goblin_prefab, spawn.transform.position, Quaternion.identity);
           Debug.Log("Spawned goblin at " + spawn.transform.position);
+          break;
+        case "Boss":
+          Instantiate(boss_prefab, spawn.transform.position, Quaternion.identity);
+          Debug.Log("Spawned Boss at " + spawn.transform.position);
           break;
         default:
           Debug.Log("Unknown spawn point: " + spawn.name);
