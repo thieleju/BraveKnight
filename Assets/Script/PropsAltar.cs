@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Gravitons.UI.Modal;
 
 //when something get into the alta, make the runes glow
 public class PropsAltar : MonoBehaviour
@@ -26,12 +27,20 @@ public class PropsAltar : MonoBehaviour
 
   IEnumerator waiter()
   {
-    yield return new WaitForSeconds(3);
+    yield return new WaitForSeconds(1);
+
+    // show message 
+    GameObject ui_manager = GameObject.Find("Demo");
+    ui_manager.GetComponent<DemoManager>().ShowInfo("You won!", "Congratulations! You have completed the game!");
 
     // load first room
     // move to spawn point
     GameObject game_handler = GameObject.Find("Main Camera");
     game_handler.GetComponent<GameHandler>().LoadRoom(0);
+
+    // reset player health
+    GameObject player = GameObject.FindWithTag("Player");
+    player.GetComponent<HeroKnight>().HealHealth(100);
   }
 
   private void OnTriggerExit2D(Collider2D other)

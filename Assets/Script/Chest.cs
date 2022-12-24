@@ -1,15 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Gravitons.UI.Modal;
 
 public class Chest : MonoBehaviour
 {
   public SpriteRenderer spriteRenderer;
   public Sprite openChest;
 
+  private bool used = false;
+
   void OnTriggerEnter2D(Collider2D other)
   {
-    if (other.CompareTag("Player"))
+    if (other.CompareTag("Player") && !used)
     {
       spriteRenderer.sprite = openChest;
 
@@ -17,7 +20,11 @@ public class Chest : MonoBehaviour
       GameObject player = GameObject.FindWithTag("Player");
       player.GetComponent<HeroKnight>().HealHealth(50);
 
-      // TODO show message 
+      // show message 
+      GameObject ui_manager = GameObject.Find("Demo");
+      ui_manager.GetComponent<DemoManager>().ShowInfo("Chest", "You found a small potion and healed 50 health!");
+
+      used = true;
     }
   }
 
