@@ -7,6 +7,7 @@ public class Chest : MonoBehaviour
 {
   public SpriteRenderer spriteRenderer;
   public Sprite openChest;
+  public Sprite closedChest;
 
   private bool used = false;
 
@@ -26,6 +27,12 @@ public class Chest : MonoBehaviour
 
       used = true;
     }
+  }
+
+  public void ResetChest()
+  {
+    spriteRenderer.sprite = closedChest;
+    used = false;
   }
 
 

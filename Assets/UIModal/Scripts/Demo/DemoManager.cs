@@ -8,13 +8,13 @@
   /// </summary>
   public class DemoManager : MonoBehaviour
   {
-    public Button button;
+    // public Button button;
     public Image image;
 
-    private void Start()
-    {
-      button.onClick.AddListener(ShowModalWithCallback);
-    }
+    // private void Start()
+    // {
+    //   button.onClick.AddListener(ShowModalWithCallback);
+    // }
 
     /// <summary>
     /// Show a simple modal
@@ -32,7 +32,7 @@
     /// <summary>
     /// Shows a modal with callback
     /// </summary>
-    private void ShowModalWithCallback()
+    public void ShowModalCloseGame()
     {
       ModalManager.Show("Quit?", "Do you want to quit the game?",
           new[] { new ModalButton() { Text = "YES", Callback = QuitGame }, new ModalButton() { Text = "NO" } });
@@ -44,9 +44,9 @@
       Application.Quit();
     }
 
-    private void OnDestroy()
-    {
-      button.onClick.RemoveListener(ShowModalWithCallback);
-    }
+    // private void OnDestroy()
+    // {
+    //   button.onClick.RemoveListener(ShowModalWithCallback);
+    // }
   }
 }

@@ -78,7 +78,7 @@ public class HeroKnight : MonoBehaviour
     if (delayToBlock <= 0.0f)
     {
       isBlocking = false;
-      delayToIdle = 0.01f;
+      // delayToIdle = 0.01f;
     }
 
     // Block
@@ -97,22 +97,22 @@ public class HeroKnight : MonoBehaviour
       Attack();
       // stop movement velocity
       body2d.velocity = new Vector2(0, 0);
-      delayToIdle = 1.01f;
+      // delayToIdle = 1.01f;
     }
     //Run
     else if ((Mathf.Abs(inputX) > Mathf.Epsilon || Mathf.Abs(inputY) > Mathf.Epsilon) && !isDead && !isBlocking)
     {
       // Reset timer
-      delayToIdle = 0.01f;
+      // delayToIdle = 0.01f;
       animator.SetInteger("AnimState", 1);
     }
     //Idle
     else
     {
       // Prevents flickering transitions to idle
-      delayToIdle -= Time.deltaTime;
-      if (delayToIdle < 0)
-        animator.SetInteger("AnimState", 0);
+      // delayToIdle -= Time.deltaTime;
+      // if (delayToIdle < 0)
+      animator.SetInteger("AnimState", 0);
     }
   }
 

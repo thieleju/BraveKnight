@@ -9,6 +9,7 @@ TagManager:
   - MobHurtbox
   - PlayerHurtbox
   - Healstone
+  - Chest
   layers:
   - Default
   - TransparentFX

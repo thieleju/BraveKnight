@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Gravitons.UI.Modal;
 
 public class GameHandler : MonoBehaviour
 {
@@ -37,6 +37,14 @@ public class GameHandler : MonoBehaviour
   // Load room on key press
   void Update()
   {
+    // check for escape key
+    if (Input.GetKeyDown(KeyCode.Escape))
+    {
+      // show close game modal
+      GameObject ui_manager = GameObject.Find("Demo");
+      ui_manager.GetComponent<DemoManager>().ShowModalCloseGame();
+    }
+
     for (int i = 0; i < keyCodes.Length; i++)
       if (Input.GetKeyDown(keyCodes[i]))
         LoadRoom(i);
@@ -54,8 +62,12 @@ public class GameHandler : MonoBehaviour
     GameObject spawn_point = current_room.transform.Find("Spawnpoint").gameObject;
     player.transform.position = spawn_point.transform.position;
 
-
     Debug.Log("Loaded room " + roomNumber);
+
+    // reset all chests
+    GameObject[] chests = GameObject.FindGameObjectsWithTag("Chest");
+    foreach (GameObject chest in chests)
+      chest.GetComponent<Chest>().ResetChest();
 
     // Use mobspawner to spawn mobs
     GameObject spawner = current_room.GetComponent<MobSpawner>().gameObject;
