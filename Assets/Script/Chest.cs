@@ -21,6 +21,9 @@ public class Chest : MonoBehaviour
       GameObject player = GameObject.FindWithTag("Player");
       player.GetComponent<HeroKnight>().HealHealth(50);
 
+      // play sound
+      FindObjectOfType<AudioManager>().Play("PlayerHeal");
+
       // show message 
       GameObject ui_manager = GameObject.Find("Demo");
       ui_manager.GetComponent<DemoManager>().ShowInfo("Chest", "You found a small potion and healed 50 health!");

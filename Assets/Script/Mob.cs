@@ -189,11 +189,17 @@ public class Mob : MonoBehaviour
 
   public void TakeDamage(float damage)
   {
+    // play sound
+    FindObjectOfType<AudioManager>().Play("EnemyHit");
+
     health -= damage;
     healthBar.SetHealth(health);
 
     if (health <= 0)
     {
+      // play sound
+      FindObjectOfType<AudioManager>().Play("EnemyDeath");
+
       MobDeath();
       return;
     }

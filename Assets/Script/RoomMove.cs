@@ -15,6 +15,10 @@ public class RoomMove : MonoBehaviour
       {
         GameObject game_handler = GameObject.Find("Main Camera");
         game_handler.GetComponent<GameHandler>().LoadRoom(room_number);
+
+        // play sound
+        FindObjectOfType<AudioManager>().Play("RoomMove");
+
         return;
       }
       // show message 

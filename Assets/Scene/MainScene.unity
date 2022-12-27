@@ -1108,7 +1108,7 @@ Transform:
   - {fileID: 650787703}
   - {fileID: 1205431635}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &120105060
 PrefabInstance:
@@ -8529,7 +8529,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &345620996
 GameObject:
@@ -8885,7 +8885,7 @@ RectTransform:
   m_Children:
   - {fileID: 2090459954}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -8926,7 +8926,7 @@ Transform:
   - {fileID: 1569374559}
   - {fileID: 553220165}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &399597695
 MonoBehaviour:
@@ -9643,6 +9643,7 @@ GameObject:
   - component: {fileID: 519420029}
   - component: {fileID: 519420033}
   - component: {fileID: 519420034}
+  - component: {fileID: 519420035}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -9714,7 +9715,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &519420033
 MonoBehaviour:
@@ -9745,6 +9746,103 @@ MonoBehaviour:
   lerpSpeed: 10
   offset_x: 0
   offset_y: 1.8
+--- !u!82 &519420035
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 24300002, guid: 1837e3e713fe5cc4b8dd26fff8f38724,
+    type: 2}
+  m_audioClip: {fileID: 8300000, guid: 214169afd82f8134ba4d4985e7291e58, type: 3}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 1
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &525327589
 GameObject:
   m_ObjectHideFlags: 0
@@ -9799,7 +9897,7 @@ Transform:
   - {fileID: 636684166}
   - {fileID: 1083250757}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &533108294
 PrefabInstance:
@@ -17341,6 +17439,142 @@ Transform:
   m_Father: {fileID: 117306274}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1214161228
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1214161230}
+  - component: {fileID: 1214161229}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1214161229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1214161228}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6577296aac4028548b85fbcf8886be07, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sounds:
+  - clip: {fileID: 8300000, guid: 323e15cfe809e114ab92c9f4b25e8bc2, type: 3}
+    name: PlayerAttack
+    volume: 1
+    pitch: 1.01
+    source: {fileID: 0}
+    loop: 0
+  - clip: {fileID: 8300000, guid: f11db4559b3ffff45b62e9327fc5535d, type: 3}
+    name: PlayerBlock
+    volume: 1
+    pitch: 1.01
+    source: {fileID: 0}
+    loop: 0
+  - clip: {fileID: 8300000, guid: b7b5a6156961bac44a67504d42ce6fcf, type: 3}
+    name: PlayerBlockSuccess
+    volume: 1
+    pitch: 1.01
+    source: {fileID: 0}
+    loop: 0
+  - clip: {fileID: 8300000, guid: 8b23b175a78d6b5458322e3a6c9905d0, type: 3}
+    name: PlayerHit
+    volume: 1
+    pitch: 1.01
+    source: {fileID: 0}
+    loop: 0
+  - clip: {fileID: 8300000, guid: 8ff2a2d7e79f81c40ac447512f879374, type: 3}
+    name: RoomMove
+    volume: 1
+    pitch: 1.01
+    source: {fileID: 0}
+    loop: 0
+  - clip: {fileID: 8300000, guid: cfce0cea076109f478783201b2a9f57f, type: 3}
+    name: PlayerHeal
+    volume: 1
+    pitch: 1.01
+    source: {fileID: 0}
+    loop: 0
+  - clip: {fileID: 8300000, guid: 566d2ea6240b489479a6e9fd608c2621, type: 3}
+    name: EnemyDeath
+    volume: 1
+    pitch: 1.01
+    source: {fileID: 0}
+    loop: 0
+  - clip: {fileID: 8300000, guid: 2b21ef916f6943c439b71a7c74568878, type: 3}
+    name: EnemyHit
+    volume: 1
+    pitch: 1.01
+    source: {fileID: 0}
+    loop: 0
+  - clip: {fileID: 8300000, guid: 21c4a490b24ba2045bc815f7626a40ef, type: 3}
+    name: PlayerDeath
+    volume: 1
+    pitch: 1.01
+    source: {fileID: 0}
+    loop: 0
+  - clip: {fileID: 8300000, guid: a652877b012108e41871f867ada9f176, type: 3}
+    name: BossAttack
+    volume: 1
+    pitch: 1.01
+    source: {fileID: 0}
+    loop: 0
+  - clip: {fileID: 8300000, guid: df7087e4d8a8bb546bc08ce68632903f, type: 3}
+    name: PlayerStep1
+    volume: 1
+    pitch: 1.01
+    source: {fileID: 0}
+    loop: 0
+  - clip: {fileID: 8300000, guid: 023ea3ddeaa8dd146b7633a0800e5a0e, type: 3}
+    name: PlayerStep2
+    volume: 1
+    pitch: 1.01
+    source: {fileID: 0}
+    loop: 0
+  - clip: {fileID: 8300000, guid: 2667a0a008b044e218b63df62e2be749, type: 3}
+    name: Success
+    volume: 1
+    pitch: 1.01
+    source: {fileID: 0}
+    loop: 0
+  - clip: {fileID: 8300000, guid: 35cf7766e9e2aa542811e896fde57989, type: 3}
+    name: MenuHover
+    volume: 1
+    pitch: 1.01
+    source: {fileID: 0}
+    loop: 0
+  - clip: {fileID: 8300000, guid: ba39bf8baf6d13046889b2d64822381a, type: 3}
+    name: MenuClick
+    volume: 1
+    pitch: 1.01
+    source: {fileID: 0}
+    loop: 0
+  mixer: {fileID: 24300002, guid: 1837e3e713fe5cc4b8dd26fff8f38724, type: 2}
+--- !u!4 &1214161230
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1214161228}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1222015270
 GameObject:
   m_ObjectHideFlags: 0
@@ -22196,7 +22430,7 @@ Transform:
   - {fileID: 1007149543}
   - {fileID: 1765317080}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1622312052
 MonoBehaviour:

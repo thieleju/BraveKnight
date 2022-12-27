@@ -16,14 +16,10 @@ public class Boss : MonoBehaviour
    */
 
   /* Public variables */
-  public Collider2D attack_hitbox_right;
-  public Collider2D attack_hitbox_left;
-
   public Animator animator;
   public Rigidbody2D body2d;
   public HealthBar healthBar;
 
-  public LayerMask playerLayers;
   public string playerHurtboxTag = "PlayerHurtbox";
 
   public float health_max = 600.0f;
@@ -43,7 +39,6 @@ public class Boss : MonoBehaviour
   private const float ATTACK_HIT_DELAY = 0.35f;
   private const float ATTACK_COOLDOWN_DELAY = 1.5f;
 
-  private int currentAttack = 0;
   private bool isAttacking = false;
   private bool isDead = false;
   private bool mob_facing_left = true;
@@ -108,6 +103,9 @@ public class Boss : MonoBehaviour
 
   void MobAttack()
   {
+    // play sound
+    FindObjectOfType<AudioManager>().Play("BossAttack");
+
     // start attack animation
     animator.SetTrigger("Attack");
 
@@ -171,8 +169,14 @@ public class Boss : MonoBehaviour
     health -= damage;
     healthBar.SetHealth(health);
 
+    // play sound
+    FindObjectOfType<AudioManager>().Play("EnemyHit");
+
     if (health <= 0)
     {
+      // play sound
+      FindObjectOfType<AudioManager>().Play("EnemyDeath");
+
       MobDeath();
       return;
     }

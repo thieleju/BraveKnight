@@ -2,6 +2,7 @@
 {
   using UnityEngine.UI;
   using UnityEngine;
+  using UnityEngine.SceneManagement;
 
   /// <summary>
   /// Manages the UI in the demo scene
@@ -26,6 +27,8 @@
 
     public void ShowInfo(string title, string body)
     {
+      // play sound
+      FindObjectOfType<AudioManager>().Play("MenuHover");
       ModalManager.Show(title, body, new[] { new ModalButton() { Text = "OK" } });
     }
 
@@ -34,14 +37,15 @@
     /// </summary>
     public void ShowModalCloseGame()
     {
-      ModalManager.Show("Quit?", "Do you want to quit the game?",
+      // play sound
+      FindObjectOfType<AudioManager>().Play("MenuHover");
+      ModalManager.Show("Quit?", "Do you want to go back to main menu?",
           new[] { new ModalButton() { Text = "YES", Callback = QuitGame }, new ModalButton() { Text = "NO" } });
     }
 
     private void QuitGame()
     {
-      Debug.Log("Quitting game");
-      Application.Quit();
+      SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);
     }
 
     // private void OnDestroy()

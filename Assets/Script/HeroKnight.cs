@@ -19,17 +19,13 @@ public class HeroKnight : MonoBehaviour
   public float attack_damage = 40f;
   public float health_max = 100.0f;
   public float health = 0.0f;
-  public float block_duration = 0.5f;
 
   /* Private variables */
   private int facingDirection = 1;
   private int currentAttack = 0;
   private float respawn_delay = 3.0f;
   private float timeSinceAttack = 0.0f;
-  private float delayToIdle = 0.0f;
   private float delayToBlock = 0.0f;
-  private float inputX_damped = 0.0f;
-  private float inputY_damped = 0.0f;
   private bool isDead = false;
   private bool isBlocking = false;
 
@@ -76,14 +72,14 @@ public class HeroKnight : MonoBehaviour
       delayToBlock -= Time.deltaTime;
 
     if (delayToBlock <= 0.0f)
-    {
       isBlocking = false;
-      // delayToIdle = 0.01f;
-    }
 
     // Block
     if (Input.GetMouseButtonDown(1) && timeSinceAttack > 0.25f && !isDead && !isBlocking)
     {
+      // play sound
+      FindObjectOfType<AudioManager>().Play("PlayerBlock");
+
       // Reset timer
       animator.SetTrigger("Block");
       // stop movement velocity
@@ -94,6 +90,9 @@ public class HeroKnight : MonoBehaviour
     //Attack
     else if (Input.GetMouseButtonDown(0) && timeSinceAttack > 0.25f && !isDead && !isBlocking)
     {
+      // play sound
+      FindObjectOfType<AudioManager>().Play("PlayerAttack");
+
       Attack();
       // stop movement velocity
       body2d.velocity = new Vector2(0, 0);
@@ -166,6 +165,9 @@ public class HeroKnight : MonoBehaviour
     // check if player is blocking 
     if (isBlocking)
     {
+      // play sound
+      FindObjectOfType<AudioManager>().Play("PlayerBlockSuccess");
+
       animator.SetTrigger("Block_Flash");
       isBlocking = false;
       // delayToIdle = 1f;
@@ -176,6 +178,9 @@ public class HeroKnight : MonoBehaviour
       return;
     }
 
+    // play sound
+    FindObjectOfType<AudioManager>().Play("PlayerHit");
+
     // take damage
     health -= damage;
     healthBar.SetHealth(health);
@@ -185,7 +190,10 @@ public class HeroKnight : MonoBehaviour
     // return if player is still alive
     if (health > 0) return;
 
-    animator.SetBool("isDead", true);
+    // play sound
+    FindObjectOfType<AudioManager>().Play("PlayerDeath");
+
+    // animator.SetBool("isDead", true);
     isDead = true;
 
     animator.SetTrigger("Death");
@@ -213,7 +221,7 @@ public class HeroKnight : MonoBehaviour
     healthBar.gameObject.SetActive(true);
 
     // reset death state
-    animator.SetBool("isDead", false);
+    // animator.SetBool("isDead", false);
     isDead = false;
 
     // remove all mobs

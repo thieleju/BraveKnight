@@ -19,7 +19,6 @@ public class PropsAltar : MonoBehaviour
 
     if (!isEnd) return;
 
-    // TODO show the end screen
 
     // wait 2 seconds
     StartCoroutine(waiter());
@@ -27,11 +26,14 @@ public class PropsAltar : MonoBehaviour
 
   IEnumerator waiter()
   {
+    // play sound
+    FindObjectOfType<AudioManager>().Play("Success");
+
     yield return new WaitForSeconds(1);
 
     // show message 
     GameObject ui_manager = GameObject.Find("Demo");
-    ui_manager.GetComponent<DemoManager>().ShowInfo("You won!", "Congratulations! You have completed the game!");
+    ui_manager.GetComponent<DemoManager>().ShowInfo("Congratulations!", "You slayed the King of Despair! You win!");
 
     // load first room
     // move to spawn point
