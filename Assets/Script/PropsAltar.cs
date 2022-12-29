@@ -19,6 +19,8 @@ public class PropsAltar : MonoBehaviour
 
     if (!isEnd) return;
 
+    GameObject[] mobs = GameObject.FindGameObjectsWithTag("Mob");
+    if (mobs.Length != 0) return;
 
     // wait 2 seconds
     StartCoroutine(waiter());
