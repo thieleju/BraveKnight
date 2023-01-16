@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Gravitons.UI.Modal;
+
 
 public class GameHandler : MonoBehaviour
 {
@@ -41,8 +41,8 @@ public class GameHandler : MonoBehaviour
     if (Input.GetKeyDown(KeyCode.Escape))
     {
       // show close game modal
-      GameObject ui_manager = GameObject.Find("Demo");
-      ui_manager.GetComponent<DemoManager>().ShowModalCloseGame();
+      GameObject ui_manager = GameObject.Find("Modal");
+      ui_manager.GetComponent<MessageManager>().ShowModalCloseGame();
     }
 
     for (int i = 0; i < keyCodes.Length; i++)

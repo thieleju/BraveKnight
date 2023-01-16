@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Gravitons.UI.Modal;
+
 
 //when something get into the alta, make the runes glow
 public class PropsAltar : MonoBehaviour
@@ -20,7 +20,14 @@ public class PropsAltar : MonoBehaviour
     if (!isEnd) return;
 
     GameObject[] mobs = GameObject.FindGameObjectsWithTag("Mob");
-    if (mobs.Length != 0) return;
+
+    // check if all mobs are dead
+    bool all_dead = true;
+    foreach (GameObject mob in mobs)
+      if (mob.GetComponent<Mob>().enabled)
+        all_dead = false;
+
+    if (!all_dead) return;
 
     // wait 2 seconds
     StartCoroutine(waiter());
@@ -34,8 +41,8 @@ public class PropsAltar : MonoBehaviour
     yield return new WaitForSeconds(1);
 
     // show message 
-    GameObject ui_manager = GameObject.Find("Demo");
-    ui_manager.GetComponent<DemoManager>().ShowInfo("Congratulations!", "You slayed the King of Despair! You win!");
+    GameObject ui_manager = GameObject.Find("Modal");
+    ui_manager.GetComponent<MessageManager>().ShowInfo("Congratulations!", "You slayed the King of Despair! You win!");
 
     // load first room
     // move to spawn point

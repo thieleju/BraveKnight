@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Gravitons.UI.Modal;
+
 
 public class RoomMove : MonoBehaviour
 {
@@ -22,8 +22,8 @@ public class RoomMove : MonoBehaviour
         return;
       }
       // show message 
-      GameObject ui_manager = GameObject.Find("Demo");
-      ui_manager.GetComponent<DemoManager>().ShowInfo("Locked", "You need to kill all mobs to progress!");
+      GameObject ui_manager = GameObject.Find("Modal");
+      ui_manager.GetComponent<MessageManager>().ShowInfo("Locked", "You need to kill all mobs to progress!");
     }
   }
 

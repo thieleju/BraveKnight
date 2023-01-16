@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Gravitons.UI.Modal;
+
 
 public class MessageTrigger : MonoBehaviour
 {
@@ -16,8 +16,8 @@ public class MessageTrigger : MonoBehaviour
     if (other.CompareTag("Player") && !triggered)
     {
       // show message 
-      GameObject ui_manager = GameObject.Find("Demo");
-      ui_manager.GetComponent<DemoManager>().ShowInfo(title, body);
+      GameObject ui_manager = GameObject.Find("Modal");
+      ui_manager.GetComponent<MessageManager>().ShowInfo(title, body);
 
       triggered = true;
     }

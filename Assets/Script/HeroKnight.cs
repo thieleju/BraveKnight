@@ -142,7 +142,8 @@ public class HeroKnight : MonoBehaviour
   void AttackCollision(Transform attackPoint)
   {
     // Detect collision with colliders in enemyLayers in range of attack
-    Collider2D[] hitObjects = Physics2D.OverlapCircleAll(attackPoint.position, attack_range, enemyLayers);
+    Collider2D[] hitObjects = 
+      Physics2D.OverlapCircleAll(attackPoint.position, attack_range, enemyLayers);
 
     // check which hitObject has the gameobject with the tag "Mob"
     foreach (Collider2D hitObject in hitObjects)

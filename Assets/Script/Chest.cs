@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Gravitons.UI.Modal;
+
 
 public class Chest : MonoBehaviour
 {
@@ -25,8 +25,8 @@ public class Chest : MonoBehaviour
       FindObjectOfType<AudioManager>().Play("PlayerHeal");
 
       // show message 
-      GameObject ui_manager = GameObject.Find("Demo");
-      ui_manager.GetComponent<DemoManager>().ShowInfo("Chest", "You found a small potion and healed 50 health!");
+      GameObject ui_manager = GameObject.Find("Modal");
+      ui_manager.GetComponent<MessageManager>().ShowInfo("Chest", "You found a small potion and healed 50 health!");
 
       used = true;
     }
